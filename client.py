@@ -14,44 +14,37 @@ valid_queries = [
 ]
 
 def client():
-    serverIP = message('Server IP: ')
-    serverPort = int(message('Server port: '))
+    serverIP   = input('Server IP: ')
+    serverPort = int(input('Server port: '))
 
     print('Attempting to connect...')
     clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientsocket.connect((serverIP, serverPort))
-
     print('Connected.')
 
     while True:
-        selected = 0
-        message = ''
-
+        # ask until they enter a valid query
         while True:
-            message = input(str('Enter message: '))
-            message = message.lower()
+            message = input('Enter message: ').strip().lower()
             if message not in valid_queries:
-                # print(f'ECHOED: {message}')
                 print('Sorry, this query cannot be processed. Please try one of the following:')
-                print(f'- What is the average moisture inside my kitchen fridge in the past three hours?')
-                print(f'- What is the average water consumption per cycle in my smart dishwasher?')
-                print(f'- Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?')
-                print()
-            else:
-                if message in valid_queries[0:2]:
-                    selected = 1
-                elif message in valid_queries[2:4]:
-                    selected = 2
-                elif message in valid_queries[4:8]:
-                    selected = 3
-                else: 
-                    print('There was a problem reading the message, please try again.')
-                    continue
-                # print(f'Success! Message chosen: {selected}')
-                break
-        
-        clientsocket.send(selected.encode('utf-8'))
-        serverResponse = clientsocket.recv(BUFF_SIZE)
-        print(f"Server response: {serverResponse.decode('utf-8')}")
+                print('- What is the average moisture inside my kitchen fridge in the past three hours?')
+                print('- What is the average water consumption per cycle in my smart dishwasher?')
+                print('- Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?\n')
+                continue
+            break
 
-client()
+        # map text to 1/2/3
+        if message in valid_queries[0:2]:
+            code = '1'
+        elif message in valid_queries[2:4]:
+            code = '2'
+        else:
+            code = '3'
+
+        clientsocket.send(code.encode('utf-8'))
+        serverResponse = clientsocket.recv(BUFF_SIZE).decode('utf-8')
+        print(f"Server response: {serverResponse}\n")
+
+if __name__ == '__main__':
+    client()
