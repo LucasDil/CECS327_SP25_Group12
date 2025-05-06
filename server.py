@@ -2,7 +2,7 @@ import os
 import socket
 import psycopg2
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ BUFF_SIZE = 5098
 # ─── HELPERS ──────────────────────────────────────────────────────────────
 def to_pst(ts: datetime) -> str:
     if ts.tzinfo is None:
-        ts = ts.replace(tzinfo=ZoneInfo("UTC"))
+        ts = ts.replace(tzinfo=timezone.utc)
     return ts.astimezone(ZoneInfo('America/Los_Angeles')).isoformat()
 
 def moisture_to_rh(raw: float) -> float:
@@ -71,6 +71,7 @@ DEVICE_METADATA = {
 
 # ─── QUERY HANDLERS ───────────────────────────────────────────────────────
 def handle_avg_moisture(pg_conn):
+    print('Client asked: "What is the average moisture inside my kitchen fridge in the past three hours?"')
     board_name = "Fridge 1"
     since = datetime.utcnow() - timedelta(hours=3)
 
@@ -96,6 +97,7 @@ def handle_avg_moisture(pg_conn):
     return f"Fridge avg RH% (3h): {rh:.2f}% at {to_pst(datetime.utcnow())}"
 
 def handle_avg_water(pg_conn):
+    print('Client asked: "What is the average water consumption per cycle in my smart dishwasher?"')
     board_name = "Dishwasher"
 
     total = 0.0
@@ -117,6 +119,7 @@ def handle_avg_water(pg_conn):
     return f"Dishwasher avg water/cycle: {gallons:.2f} gal at {to_pst(datetime.utcnow())}"
 
 def handle_max_electricity(pg_conn):
+    print('Client asked: "Which device consumed more electricity among my three iot devices (two refrigerators and a dishwasher)"')
     boards = {
         "Fridge 1 Board": "Ammeter (Fridge 1)",
         "Fridge 2 Board": "Ammeter (Fridge 2)",
