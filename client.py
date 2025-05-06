@@ -3,6 +3,7 @@ import sys
 
 BUFF_SIZE = 5098
 
+#queries a user may input, with conditions for punctuation
 valid_queries = [
     'what is the average moisture inside my kitchen fridge in the past three hours?',
     'what is the average moisture inside my kitchen fridge in the past three hours',
