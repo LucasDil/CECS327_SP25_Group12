@@ -118,10 +118,11 @@ def handle_avg_water(pg_conn):
 
 def handle_max_electricity(pg_conn):
     boards = {
-        "Fridge 1": "Ammeter (Fridge 1)",
-        "Fridge 2": "Ammeter (Fridge 2)",
-        "Dishwasher": "Ammeter (Dishwasher)",
+        "Fridge 1 Board": "Ammeter (Fridge 1)",
+        "Fridge 2 Board": "Ammeter (Fridge 2)",
+        "Dishwasher Board": "Ammeter (Dishwasher)",
     }
+
 
     totals = {}
     with pg_conn.cursor() as cur:
@@ -132,7 +133,7 @@ def handle_max_electricity(pg_conn):
                 WHERE payload->>'board_name' = %s
             """, (board,))
             for row in cur.fetchall():
-                payload = json.loads(row[0])
+                payload = row[0]
                 val = float(payload.get(sensor, 0.0))
                 totals[board] = totals.get(board, 0.0) + val
 
