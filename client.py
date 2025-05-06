@@ -1,4 +1,5 @@
 import socket
+import sys
 
 BUFF_SIZE = 5098
 
@@ -12,6 +13,10 @@ valid_queries = [
     'which device consumed more electricity among my three iot devices?',
     'which device consumed more electricity among my three iot devices',
 ]
+
+def quit_program():
+    print('Closing program...')
+    sys.exit()
 
 def client():
     serverIP = input('Server IP: ')
@@ -30,7 +35,9 @@ def client():
         while True:
             message = input(str('Enter message: '))
             message = message.lower()
-            if message not in valid_queries:
+            if message == 'quit':
+                quit_program()
+            elif message not in valid_queries:
                 # print(f'ECHOED: {message}')
                 print('Sorry, this query cannot be processed. Please try one of the following:')
                 print(f'- What is the average moisture inside my kitchen fridge in the past three hours?')
