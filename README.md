@@ -11,9 +11,10 @@ How to run client, server, and database:
 8. Have the programs for each respective client/server saved in the virtual machines
 9. Through the command lines be sure you are in the proper directory
 10. Stage the connection string using the $env then the connection string
-11. Run the server with the port
-12. Run the server with the proper ip and port
-13. Take the query as a whole and prompt the server with it
-14. It should return the proper response for all queries
-15. Close out the devices and vms
-16. Turn off devices on Dataniz
+11. run pip install tzdata
+12. Run the server with the port
+13. Run the server with the proper ip and port
+14. Take the query as a whole and prompt the server with it
+15. It should return the proper response for all queries
+16. Close out the devices and vms
+17. Turn off devices on Dataniz
