@@ -28,7 +28,7 @@ def liters_to_gallons(liters: float) -> float:
     return liters * 0.264172
 
 def parse_timestamp(ts: str) -> datetime:
-    return datetime.utcfromtimestamp(int(ts))
+    return datetime.fromtimestamp(int(ts), tz=timezone.utc)
 
 # ─── SIMPLE BST FOR SEARCHING ─────────────────────────────────────────────
 class BSTNode:
@@ -73,7 +73,7 @@ DEVICE_METADATA = {
 def handle_avg_moisture(pg_conn):
     print('Client asked: "What is the average moisture inside my kitchen fridge in the past three hours?"')
     board_name = "Fridge 1"
-    since = datetime.utcnow() - timedelta(hours=3)
+    since = datetime.now(timezone.utc) - timedelta(hours=3)
 
     bst = None
     with pg_conn.cursor() as cur:
@@ -91,10 +91,10 @@ def handle_avg_moisture(pg_conn):
             else:
                 bst = BSTNode(ts, val)
 
-    readings = bst.get_range(since, datetime.utcnow()) if bst else []
+    readings = bst.get_range(since, datetime.now(timezone.utc)) if bst else []
     avg_raw = sum(readings) / len(readings) if readings else 0.0
     rh = moisture_to_rh(avg_raw)
-    return f"Fridge avg RH% (3h): {rh:.2f}% at {to_pst(datetime.utcnow())}"
+    return f"Fridge avg RH% (3h): {rh:.2f}% at {to_pst(datetime.now(timezone.utc))}"
 
 def handle_avg_water(pg_conn):
     print('Client asked: "What is the average water consumption per cycle in my smart dishwasher?"')
@@ -116,7 +116,7 @@ def handle_avg_water(pg_conn):
 
     avg_liters = total / count if count else 0.0
     gallons = liters_to_gallons(avg_liters)
-    return f"Dishwasher avg water/cycle: {gallons:.2f} gal at {to_pst(datetime.utcnow())}"
+    return f"Dishwasher avg water/cycle: {gallons:.2f} gal at {to_pst(datetime.now(timezone.utc))}"
 
 def handle_max_electricity(pg_conn):
     print('Client asked: "Which device consumed more electricity among my three iot devices (two refrigerators and a dishwasher)"')
