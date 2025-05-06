@@ -11,7 +11,9 @@ DATABASE_URL = os.getenv('NEON_DATABASE_URL')
 if not DATABASE_URL:
     raise RuntimeError("NEON_DATABASE_URL not set")
 
-HOST      = '0.0.0.0'
+hostname = socket.gethostname()
+HOST = socket.gethostbyname(hostname)
+print(f'Host: {HOST}')
 PORT      = int(input("Port to listen on: "))
 BUFF_SIZE = 5098
 

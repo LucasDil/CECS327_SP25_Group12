@@ -14,8 +14,8 @@ valid_queries = [
 ]
 
 def client():
-    serverIP = message('Server IP: ')
-    serverPort = int(message('Server port: '))
+    serverIP = input('Server IP: ')
+    serverPort = int(input('Server port: '))
 
     print('Attempting to connect...')
     clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -50,7 +50,7 @@ def client():
                 # print(f'Success! Message chosen: {selected}')
                 break
         
-        clientsocket.send(selected.encode('utf-8'))
+        clientsocket.send(str(selected).encode('utf-8'))
         serverResponse = clientsocket.recv(BUFF_SIZE)
         print(f"Server response: {serverResponse.decode('utf-8')}")
 
