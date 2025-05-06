@@ -5,7 +5,6 @@ import json
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-# ─── CONFIG ───────────────────────────────────────────────────────────────
 DATABASE_URL = os.getenv('NEON_DATABASE_URL')
 if not DATABASE_URL:
     raise RuntimeError("NEON_DATABASE_URL not set")
@@ -15,8 +14,8 @@ HOST = socket.gethostbyname(hostname)
 PORT = int(input("Port to listen on: "))
 BUFF_SIZE = 5098
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────
-def to_pst(ts: datetime) -> str:
+# Helper functions
+def to_pst(ts: datetime) -> str: #converstion to pst
     if ts.tzinfo is None:
         ts = ts.replace(tzinfo=timezone.utc)
     return ts.astimezone(ZoneInfo('America/Los_Angeles')).isoformat()
