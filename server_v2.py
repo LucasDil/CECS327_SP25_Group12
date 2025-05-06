@@ -160,15 +160,18 @@ def main():
             code = client.recv(BUFF_SIZE).decode().strip()
             if not code:
                 break
-            if code == '1':
-                resp = handle_avg_moisture(pg_conn)
-            elif code == '2':
-                resp = handle_avg_water(pg_conn)
-            elif code == '3':
-                resp = handle_max_electricity(pg_conn)
-            else:
-                resp = "ERROR: send 1, 2, or 3."
+
+            with psycopg2.connect(DATABASE_URL, sslmode='require') as pg_conn:
+                if code == '1':
+                    resp = handle_avg_moisture(pg_conn)
+                elif code == '2':
+                    resp = handle_avg_water(pg_conn)
+                elif code == '3':
+                    resp = handle_max_electricity(pg_conn)
+                else:
+                    resp = "ERROR: send 1, 2, or 3."
             client.send(resp.encode())
+            
     finally:
         client.close()
         srv.close()
