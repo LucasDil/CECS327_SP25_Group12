@@ -72,7 +72,7 @@ DEVICE_METADATA = {
 # ─── QUERY HANDLERS ───────────────────────────────────────────────────────
 def handle_avg_moisture(pg_conn):
     print('Client asked: "What is the average moisture inside my kitchen fridge in the past three hours?"')
-    board_name = "Fridge 1"
+    board_name = "Fridge 1 Board"
     since = datetime.now(timezone.utc) - timedelta(hours=3)
 
     bst = None
@@ -83,7 +83,7 @@ def handle_avg_moisture(pg_conn):
             WHERE payload->>'board_name' = %s
         """, (board_name,))
         for row in cur.fetchall():
-            payload = json.loads(row[0])
+            payload = row[0]
             ts = parse_timestamp(payload["timestamp"])
             val = float(payload.get("Moisture Meter (Fridge 1)", 0.0))
             if bst:
@@ -98,7 +98,7 @@ def handle_avg_moisture(pg_conn):
 
 def handle_avg_water(pg_conn):
     print('Client asked: "What is the average water consumption per cycle in my smart dishwasher?"')
-    board_name = "Dishwasher"
+    board_name = "Dishwasher Board"
 
     total = 0.0
     count = 0
@@ -109,7 +109,7 @@ def handle_avg_water(pg_conn):
             WHERE payload->>'board_name' = %s
         """, (board_name,))
         for row in cur.fetchall():
-            payload = json.loads(row[0])
+            payload = row[0]
             liters = float(payload.get("Water Consumption Sensor", 0.0))
             total += liters
             count += 1
