@@ -3,6 +3,7 @@ import sys
 
 BUFF_SIZE = 5098
 
+# all valid queries (all lower-cased)
 valid_queries = [
     'what is the average moisture inside my kitchen fridge in the past three hours?',
     'what is the average moisture inside my kitchen fridge in the past three hours',
@@ -14,6 +15,7 @@ valid_queries = [
     'which device consumed more electricity among my three iot devices',
 ]
 
+# when saying "quit" in command line -> closes program
 def quit_program():
     print('Closing program...')
     sys.exit()
@@ -33,11 +35,11 @@ def client():
         message = ''
 
         while True:
-            message = input(str('Enter message: '))
-            message = message.lower()
+            message = input(str('Enter message: ')) #takes user query
+            message = message.lower() #lowercases the query so that it works with valid_queries
             if message == 'quit':
                 quit_program()
-            elif message not in valid_queries:
+            elif message not in valid_queries: #invalid queries (say in powershell the correct queries)
                 # print(f'ECHOED: {message}')
                 print('Sorry, this query cannot be processed. Please try one of the following:')
                 print(f'- What is the average moisture inside my kitchen fridge in the past three hours?')
@@ -45,6 +47,7 @@ def client():
                 print(f'- Which device consumed more electricity among my three IoT devices (two refrigerators and a dishwasher)?')
                 print()
             else:
+                #detects which query it is then apply it to a number (based on Question number) and send it to the server
                 if message in valid_queries[0:2]:
                     selected = 1
                 elif message in valid_queries[2:4]:
@@ -59,6 +62,6 @@ def client():
         
         clientsocket.send(str(selected).encode('utf-8'))
         serverResponse = clientsocket.recv(BUFF_SIZE)
-        print(f"Server response: {serverResponse.decode('utf-8')}")
+        print(f"Server response: {serverResponse.decode('utf-8')}") #prints then repeat process
 
 client()
