@@ -5,7 +5,6 @@ import json
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-# ─── CONFIG ───────────────────────────────────────────────────────────────
 DATABASE_URL = os.getenv('NEON_DATABASE_URL')
 if not DATABASE_URL:
     raise RuntimeError("NEON_DATABASE_URL not set")
@@ -15,26 +14,26 @@ HOST = socket.gethostbyname(hostname)
 PORT = int(input("Port to listen on: "))
 BUFF_SIZE = 5098
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────
-def to_pst(ts: datetime) -> str:
+# Helper functions
+def to_pst(ts: datetime) -> str: #converstion to pst
     if ts.tzinfo is None:
         ts = ts.replace(tzinfo=timezone.utc)
     return ts.astimezone(ZoneInfo('America/Los_Angeles')).isoformat()
 
-def moisture_to_rh(raw: float) -> float:
+def moisture_to_rh(raw: float) -> float: # %RH
     return max(0.0, min(100.0, raw / 1023.0 * 100.0))
 
-def liters_to_gallons(liters: float) -> float:
+def liters_to_gallons(liters: float) -> float: # Liters
     return liters * 0.264172
 
 def parse_timestamp(ts: str) -> datetime:
     return datetime.fromtimestamp(int(ts), tz=timezone.utc)
 
-# ─── SIMPLE BST FOR SEARCHING ─────────────────────────────────────────────
+# Chose BST to traverse through the data
 class BSTNode:
     def __init__(self, key, data):
         self.key = key
-        self.data = [data]
+        self.data = [data] 
         self.left = None
         self.right = None
 
@@ -62,14 +61,14 @@ class BSTNode:
             results.extend(self.right.get_range(start, end))
         return results
 
-# ─── METADATA ─────────────────────────────────────────────────────────────
+# Mapped out metadata
 DEVICE_METADATA = {
     "Fridge 1": {"tz": "UTC"},
     "Fridge 2": {"tz": "UTC"},
     "Dishwasher": {"tz": "UTC"},
 }
 
-# ─── QUERY HANDLERS ───────────────────────────────────────────────────────
+# functions for queries
 def handle_avg_moisture(pg_conn):
     print('Client asked: "What is the average moisture inside my kitchen fridge in the past three hours?"')
     board_name = "Fridge 1 Board"
@@ -147,7 +146,7 @@ def handle_max_electricity(pg_conn):
     max_val = totals[max_device]
     return f"{max_device} consumed the most electricity: {max_val:.2f} kWh"
 
-# ─── MAIN SERVER LOOP ─────────────────────────────────────────────────────
+# main loop
 def main():
     pg_conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     print("[DB] Connected.")
